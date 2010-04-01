@@ -107,6 +107,7 @@
 
 				// Convert the template into pure JavaScript
 				str
+					.replace(/([\\'])/g, "\\$1")
 					.replace(/[\r\t\n]/g, " ")
 					.replace(/\${([^}]*)}/g, "{{= $1}}")
 					.replace(/{{(\/?)(\w+|.)(?:\((.*?)\))?(?: (.*?))?}}/g, function(all, slash, type, fnargs, args) {
