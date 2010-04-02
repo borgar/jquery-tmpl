@@ -71,16 +71,16 @@
 		 */
 
 		tmplcmd: {
-			each: {
+			'each': {
 				_default: [ null, "$i" ],
 				prefix: "jQuery.each($1,function($2){with(this){",
 				suffix: "}});"
 			},
-			if: {
+			'if': {
 				prefix: "if($1){",
 				suffix: "}"
 			},
-			else: {
+			'else': {
 				prefix: "}else{"
 			},
 			html: {
