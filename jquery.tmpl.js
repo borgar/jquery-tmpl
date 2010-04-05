@@ -71,6 +71,10 @@
 		 */
 
 		tmplcmd: {
+			comment: {
+				prefix: "/*",
+				suffix: "*/"
+			},
 			each: {
 				_default: [ null, "$i" ],
 				prefix: "jQuery.each($1,function($2){with(this){",
