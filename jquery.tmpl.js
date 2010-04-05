@@ -77,7 +77,15 @@
 				suffix: "}});"
 			},
 			if: {
-				prefix: "if($1){",
+				prefix: "try{if($1){",
+				suffix: "}}catch(e){}"
+			},
+			ifdef: {
+				prefix: "try{if(typeof($1)!=='undefined'){",
+				suffix: "}}catch(e){}"
+			},
+			ifndef: {
+				prefix: "try{if(typeof($1)==='undefined'){throw 'undefined';}}catch(e){",
 				suffix: "}"
 			},
 			else: {
@@ -116,7 +124,7 @@
 							throw "Template not found: " + type;
 						}
 
-						var def = tmpl._default;
+						var def = tmpl._default | [];
 
 						return "');" + tmpl[slash ? "suffix" : "prefix"]
 							.split("$1").join(args || def[0])
