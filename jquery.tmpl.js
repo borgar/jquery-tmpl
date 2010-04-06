@@ -81,15 +81,15 @@
 				suffix: "}});"
 			},
 			"if": {
-				prefix: "if( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ){",
+				prefix: "if( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ){",
 				suffix: "}"
 			},
 			"ifdef": {
-				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) !== 'undefined' ){",
+				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ) !== 'undefined' ){",
 				suffix: "}"
 			},
 			"ifndef": {
-				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) === 'undefined' ){",
+				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ) === 'undefined' ){",
 				suffix: "}"
 			},
 			"else": {
@@ -100,7 +100,7 @@
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.push($.encode(typeof (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}())==='function'?(function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()).call(this):(function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}())));"
+				prefix: "_.push($.encode(typeof (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())==='function'?(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()).call(this):(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())));"
 			}
 		},
 
