@@ -81,15 +81,15 @@
 				suffix: "}});"
 			},
 			if: {
-				prefix: "try{if($1){",
-				suffix: "}}catch(e){}"
+				prefix: "if( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ){",
+				suffix: "}"
 			},
 			ifdef: {
-				prefix: "try{if(typeof($1)!=='undefined'){",
-				suffix: "}}catch(e){}"
+				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) !== 'undefined' ){",
+				suffix: "}"
 			},
 			ifndef: {
-				prefix: "try{if(typeof($1)==='undefined'){throw 'undefined';}}catch(e){",
+				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) === 'undefined' ){",
 				suffix: "}"
 			},
 			else: {
@@ -100,7 +100,7 @@
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "try{_.push($.encode(typeof $1==='function'?$1.call(this):$1));}catch(e){}"
+				prefix: "_.push($.encode(typeof (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}())==='function'?(function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()).call(this):(function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}())));"
 			}
 		},
 
