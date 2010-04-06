@@ -71,31 +71,31 @@
 		 */
 
 		tmplcmd: {
-			comment: {
+			"comment": {
 				prefix: "/*",
 				suffix: "*/"
 			},
-			each: {
+			"each": {
 				_default: [ null, "$i" ],
 				prefix: "jQuery.each($1,function($2){with(this){",
 				suffix: "}});"
 			},
-			if: {
+			"if": {
 				prefix: "if( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ){",
 				suffix: "}"
 			},
-			ifdef: {
+			"ifdef": {
 				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) !== 'undefined' ){",
 				suffix: "}"
 			},
-			ifndef: {
+			"ifndef": {
 				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name!=='ReferenceError'){throw err;}return undefined;}}()) ) === 'undefined' ){",
 				suffix: "}"
 			},
-			else: {
+			"else": {
 				prefix: "}else{"
 			},
-			html: {
+			"html": {
 				prefix: "_.push(typeof $1==='function'?$1.call(this):$1);"
 			},
 			"=": {
@@ -119,6 +119,7 @@
 
 				// Convert the template into pure JavaScript
 				str
+					.replace(/([\\'])/g, "\\$1")
 					.replace(/[\r\t\n]/g, " ")
 					.replace(/\${([^}]*)}/g, "{{= $1}}")
 					.replace(/{{(\/?)(\w+|.)(?:\((.*?)\))?(?: (.*?))?}}/g, function(all, slash, type, fnargs, args) {
