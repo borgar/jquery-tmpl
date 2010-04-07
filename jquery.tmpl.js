@@ -53,11 +53,11 @@
 
 			if ( jQuery.isArray( data ) ) {
 				return jQuery.map( data, function( data, i ) {
-					return fn.call( data, jQuery, data, i );
+					return $( fn.call( data, jQuery, data, i ) ).get();
 				});
 
 			} else {
-				return fn.call( data, jQuery, data, 0 );
+				return $( fn.call( data, jQuery, data, 0 ) ).get();
 			}
 		},
 		
@@ -135,10 +135,10 @@
 							.split("$1").join(args || def[0])
 							.split("$2").join(fnargs || def[1]) + "_.push('";
 					})
-				+ "');}return $(_.join('')).get();");
+				+ "');}return _.join('');");
 
 			// Provide some basic currying to the user
-			return data ? fn.call( this, jQuery, data, i ) : fn;
+			return data ? jQuery( fn.call( this, jQuery, data, i ) ).get() : fn;
 		}
 	});
 })(jQuery);
