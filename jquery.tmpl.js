@@ -112,7 +112,7 @@
 			// Generate a reusable function that will serve as a template
 			// generator (and which will be cached).
 			var fn = new Function("jQuery","$data","$i",
-				"var $=jQuery,_=[];_.data=$data;_.index=$i;" +
+				"var $=jQuery,_=[];_.data=$data;_.index=$i||0;" +
 
 				// Introduce the data as local variables using with(){}
 				"with($data){_.push('" +
