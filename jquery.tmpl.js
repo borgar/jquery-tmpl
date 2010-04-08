@@ -129,7 +129,7 @@
 							throw "Template not found: " + type;
 						}
 
-						var def = tmpl._default | [];
+						var def = tmpl._default || [];
 
 						return "');" + tmpl[slash ? "suffix" : "prefix"]
 							.split("$1").join(args || def[0])
