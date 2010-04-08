@@ -6,7 +6,8 @@
  */
 (function(jQuery){
 	// Override the DOM manipulation function
-	var oldManip = jQuery.fn.domManip;
+	var oldManip = jQuery.fn.domManip,
+	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())";
 	
 	jQuery.fn.extend({
 		render: function( data ) {
@@ -81,26 +82,26 @@
 				suffix: "}});"
 			},
 			"if": {
-				prefix: "if( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ){",
+        prefix: "if(" + safe_var + "){",
 				suffix: "}"
 			},
 			"ifdef": {
-				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ) !== 'undefined' ){",
+				prefix: "if( typeof(" + safe_var + ") !== 'undefined' ){",
 				suffix: "}"
 			},
 			"ifndef": {
-				prefix: "if( typeof( (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()) ) === 'undefined' ){",
+				prefix: "if( typeof(" + safe_var + ") === 'undefined' ){",
 				suffix: "}"
 			},
 			"else": {
 				prefix: "}else{"
 			},
 			"html": {
-				prefix: "_.push(typeof $1==='function'?$1.call(this):$1);"
+				prefix: "_.push(typeof " + safe_var + "==='function'?" + safe_var + ".call(this):" + safe_var + ");"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.push($.encode(typeof (function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())==='function'?(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}()).call(this):(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())));"
+				prefix: "_.push($.encode(typeof " + safe_var + "==='function'?" + safe_var + ".call(this):" + safe_var + "));"
 			}
 		},
 
