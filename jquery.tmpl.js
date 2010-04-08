@@ -7,7 +7,7 @@
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
-	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}())";
+	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))";
 	
 	jQuery.fn.extend({
 		render: function( data ) {
