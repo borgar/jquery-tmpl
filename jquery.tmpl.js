@@ -109,37 +109,65 @@
 			return text != null ? document.createTextNode( text.toString() ).nodeValue : "";
 		},
 
-		tmpl: function(str, data, i) {
+		tmpl: function( str, data, i ) {
+		  
+		  var rx_esc = /(\\(?!["'])|[\n\r\b\t])/g, 
+		      fn_esc = function ( a ) {
+		          var h = a.charCodeAt( 0 ).toString( 16 );
+              return '\\u0000'.substring( 0, 6 - h.length ) + h;
+            };
+		  
+		  // Convert alternate variable syntax (${ ... }) into tag syntax ({{= ... }})
+		  str = str.replace(/\${([^}]*)}/g, "{{= $1}}");
+      
+      // Convert the template into JavaScript
+		  var m, s = [
+		    "var $=jQuery,_=[];", 
+		    "_.data=$data;", 
+		    "_.index=$i||0;",
+		    "with($data){" // Introduce the data as local variables using with(){}
+		  ];
+		  while ( m = str.match( /^(.*?){{\s*(\/?)(\w+|\S)(?:\((.*?)\))?(?: (.*?))?\s*}}/ ) ) {
+		    
+		    // have prefix before tag
+		    if ( m[1] ) {
+          s.push( "_.push('" + m[1].replace( rx_esc, fn_esc ) + "');" );
+		    }
+
+		    var slash = m[2], type = m[3], fnargs = m[4], args = m[5];
+
+		    // have a matching template
+		    var tmpl = jQuery.tmplcmd[ type ];
+		    if ( !tmpl ) {
+					throw "Template not found: " + type;
+				}
+		    
+		    // default args & fnargs
+		    var def = tmpl._default || [];
+				
+		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
+					        .split("$1").join( args   || def[0] )
+					        .split("$2").join( fnargs || def[1] )
+					        );
+				
+				str = str.substr( m[0].length );
+		    
+		  }
+		  
+		  // push any remaining string 
+	    if ( str ) {
+        s.push( "_.push('" + str.replace( rx_esc, fn_esc ) + "');" );
+	    }
+		  
+		  s.push( "}return _.join('');" );
+		  
 			// Generate a reusable function that will serve as a template
 			// generator (and which will be cached).
-			var fn = new Function("jQuery","$data","$i",
-				"var $=jQuery,_=[];_.data=$data;_.index=$i||0;" +
-
-				// Introduce the data as local variables using with(){}
-				"with($data){_.push('" +
-
-				// Convert the template into pure JavaScript
-				str
-					.replace(/([\\'])/g, "\\$1")
-					.replace(/[\r\t\n]/g, " ")
-					.replace(/\${([^}]*)}/g, "{{= $1}}")
-					.replace(/{{\s*(\/?)(\w+|.)(?:\((.*?)\))?(?: (.*?))?\s*}}/g, function(all, slash, type, fnargs, args) {
-						var tmpl = jQuery.tmplcmd[ type ];
-
-						if ( !tmpl ) {
-							throw "Template not found: " + type;
-						}
-
-						var def = tmpl._default || [];
-
-						return "');" + tmpl[slash ? "suffix" : "prefix"]
-							.split("$1").join(args || def[0])
-							.split("$2").join(fnargs || def[1]) + "_.push('";
-					})
-				+ "');}return _.join('');");
+      var fn = new Function( "jQuery","$data","$i", s.join('\n') );
 
 			// Provide some basic currying to the user
 			return data ? jQuery( fn.call( this, jQuery, data, i ) ).get() : fn;
+
 		}
 	});
 })(jQuery);
