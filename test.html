@@ -84,6 +84,8 @@ test("Basics", function() {
   test_handler( "returns do not kill tags", R('{{\r= \r\none\r\n }}',O), 'first');
   test_handler( "returns in strings don't kill tags", R('{{= "on\re" }}',O), 'on\re' );
   test_handler( "slashes in strings don't kill tags", R('{{= "on\\e" }}',O), 'on\\e');
+  test_handler( "newlines don't kill parsing", R('a\nb\nc{{= 8 }}.'), 'a\nb\nc8.');
+
   // TODO: this is the data object (contexts)
 
   jQuery.getText = function ( str ) { return str.toUpperCase(); };
