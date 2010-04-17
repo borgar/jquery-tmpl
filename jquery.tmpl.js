@@ -7,8 +7,10 @@
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
-	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))";
-	
+	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
+	    rx_oper  = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
+	    rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
+  
 	jQuery.fn.extend({
 		render: function( data ) {
 			return this.map(function(i, tmpl){
@@ -141,6 +143,23 @@
 		    if ( !tmpl ) {
 					throw "Template tag not found: " + type;
 				}
+
+        // attempt to block mutating as much is reasonably possible by limiting syntax
+        // user can theoretically do `arrayname.slice(1,2)` but then that is his mess to deal with
+        if ( args || fnargs ) {
+          var fail,
+              cleaned = (args + ' ' +fnargs).replace( /"(?:\\"|[^"])*?"|'(?:\\'|[^'])*?'|[!=]=+|([^<>])[><]=|\b\[/g, '$1' ),
+              tag = m[0].substr( ( m[1] || '' ).length );
+          // disallow: {}, =, +=, -=, *=, /=, >>=, <<=, >>>=, &=, |=, ^=, ++, --
+          if ( (fail = cleaned.match( rx_oper )) ) {
+            throw SyntaxError('Illegal template operator "' + fail[0] + '" in ' + tag);
+          }
+          // disallow: break, case, catch, continue, default, delete, do, else, finally, for, function, if, new, return, 
+          //           switch, throw, try, var, void, while, with
+          else if ( fail = cleaned.match( rx_keywd ) ) {
+            throw SyntaxError('Illegal reserved word "' +  fail[0] + '" in ' + tag);
+          }
+        }
 		    
 		    // default args & fnargs
 		    var def = tmpl._default || [];
@@ -159,7 +178,7 @@
         s.push( "_.push('" + str.replace( rx_esc, fn_esc ) + "');" );
 	    }
 		  
-		  s.push( "}return _.join('');" );
+		  s.push( "}", "return _.join('');" );
 		  
 			// Generate a reusable function that will serve as a template
 			// generator (and which will be cached).
