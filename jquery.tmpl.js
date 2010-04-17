@@ -132,7 +132,7 @@
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}
 		  ];
-		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\((.*?)\))?(?: (.*?))?\s*}}/ ) ) {
+		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\((.*?)\))?(?:\s+([\s\S]*?))?\s*}}/ ) ) {
 		    
 		    // have prefix before tag
 		    if ( m[1] ) {
@@ -146,6 +146,13 @@
 		    if ( !tmpl ) {
 					throw "Template tag not found: " + type;
 				}
+
+        // escape any escapables within arguments strings
+        if ( args && /['"]/.test( args ) ) {
+          args = args.replace(/(")((?:\\"|[^"])*?)"|(')((?:\\'|[^'])*?)'/g, function ( a, b, c, d, e ) {
+            return (b||d) + (c || e || '').replace( rx_esc, fn_esc ) + (b||d);
+          });
+        }
 
         // attempt to block mutating as much is reasonably possible by limiting syntax
         // user can theoretically do `arrayname.slice(1,2)` but then that is his mess to deal with
