@@ -139,7 +139,7 @@
 		    // have a matching template
 		    var tmpl = jQuery.tmplcmd[ type ];
 		    if ( !tmpl ) {
-					throw "Template not found: " + type;
+					throw "Template tag not found: " + type;
 				}
 		    
 		    // default args & fnargs
