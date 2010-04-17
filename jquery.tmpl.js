@@ -119,6 +119,9 @@
               return '\\u0000'.substring( 0, 6 - h.length ) + h;
             };
 		  
+		  // remove all comments {# ... #} from the template string
+		  str = str.replace( /\{#("(\"|[^"])*?"|'(\'|[^'])*?'|[\S\s])*?#\}/g, '' );
+      
 		  // Convert alternate variable syntax (${ ... }) into tag syntax ({{= ... }})
 		  str = str.replace(/\${([^}]*)}/g, "{{= $1}}");
       
