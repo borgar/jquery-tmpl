@@ -176,12 +176,18 @@ test("Basics", function() {
 test("Comments", function() {
 
   test_handler( "comments are removed", R('A{# comments test #}B',O), "AB" );
+  test_handler( "comments are removed (2)", R('{# inky #}foo{# blinky #}', O), 'foo' );
   test_handler( "comments may include string of comments", R('A{# comments "#}" test #}B',O), "AB" );
   test_handler( "comments cannot nest other comments", R('A{# C{# E #}D #}B',O), "AD #}B" );
   test_handler( "comments may include strings with escapes (double)", R('A{# comments "str\"ing" test #}B',O), "AB" );
   test_handler( "comments may include strings with escapes (single)", R("A{# comments 'str\'ing' test #}B",O), "AB" );
   test_handler( "comments may include tags", R("A{# {{= v }} #}B",O), "AB" );
   test_handler( "comments may span lines", R("A{# \ncomments test\n #}B",O), "AB" );
+
+  test_handler( "comments may contain invalid content (invalid tag)", R('1{# {{ INVALID_TAG }} #}2', O), '12' );
+  test_handler( "comments may contain invalid content (stray end tag)", R('1{# {{/if}} #}2', O), '12' );
+  test_handler( "comments may contain invalid content (stray else)", R('1{# {{else}} #}2', O), '12' );
+  test_handler( "comments may contain invalid content (invalid javascript)", R('1{# {{if ...}} #}2', O), '12' );
 
 });
 test("Variables", function() {
@@ -270,27 +276,6 @@ test("Tag: each", function() {
   test_handler( 'errors are passed back correctly (syntax)', R("{{each arr}}{{= $i }}{{ syntax_error }}{{/each}}",O), SyntaxError );
   test_handler( 'errors are passed back correctly (reference)', R("{{each arr}}{{= $i }}{{ reference_error }}{{/each}}",O), ReferenceError );
   test_handler( 'errors are passed back correctly (type)', R("{{each arr}}{{= $i }}{{ type_error }}{{/each}}",O), TypeError );
-
-});
-test("Tag: comment", function() {
-
-  test_handler( "comments hide contents (1)", R('{{comment}}inky{{/comment}}foo', O), 'foo' );
-  test_handler( "comments hide contents (2)", R('{{comment}}inky{{/comment}}foo{{comment}}blinky{{/comment}}', O), 'foo' );
-
-// this may be unreasonable:
-//  test_handler( "comments may contain other comments", R('1{{comment}}3{{comment}}5{{/comment}}4{{/comment}}2', O), '12' );
-
-// fails but seems reasonable that it should work:
-  test_handler( "comments may contain invalid content (invalid tag)", R('1{{comment}}{{ INVALID_TAG }}{{/comment}}2', O), '12' );
-
-  test_handler( "comments may contain invalid content (stray end tag)", R('1{{comment}}{{/if}}{{/comment}}2', O), '12' );
-  test_handler( "comments may contain invalid content (stray else)", R('1{{comment}}{{else}}{{/comment}}2', O), '12' );
-  test_handler( "comments may contain invalid content (invalid javascript)", R('1{{comment}}{{if ...}}{{/comment}}2', O), '12' );
-
-
-  test_handler( "comments should not throw errors (syntax)", R('1{{comment}}{{ syntax_error }}{{/comment}}2', O), '12' );
-  test_handler( "comments should not throw errors (reference)", R('1{{comment}}{{ reference_error }}{{/comment}}2', O), '12' );
-  test_handler( "comments should not throw errors (type)", R('1{{comment}}{{ type_error }}{{/comment}}2', O), '12' );
 
 });
 test("Tag: if", function() {
