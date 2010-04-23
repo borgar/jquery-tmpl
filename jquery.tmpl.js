@@ -122,7 +122,7 @@
 		  str = str.replace(/\${([^}]*)}/g, "{{= $1}}");
       
       // Convert the template into JavaScript
-		  var m, s = [
+		  var m, stack = [], s = [
 		    "var $=jQuery,_=[];", 
 		    "_.data=$data;", 
 		    "_.index=$i||0;",
@@ -168,8 +168,26 @@
         }
 		    
 		    // default args & fnargs
-		    var def = tmpl._default || [];
-				
+		    var tag, def = tmpl._default || [];
+        
+        // for tags that define both a prefix and a suffix, keep a stack of nesting...
+        if ( tmpl.prefix && tmpl.suffix ) {
+          if ( slash ) {
+            // pop stack
+            tag = stack.pop();
+            if ( !tag || tag[0] !== type ) {
+              throw SyntaxError('Unexpected termination by "' + type +'".');
+            }
+            // recall opener arguments
+            args = tag[1];
+            fnargs = tag[2];
+          }
+          else  {
+            // push to stack
+            stack.push([ type, args, fnargs ]);
+          }
+        }
+
 		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
 		              .split("$SAFE").join( safe_var )
 					        .split("$1").join( args   || def[0] )
@@ -186,7 +204,7 @@
 	    }
 		  
 		  s.push( "}", "return _.join('');" );
-		  
+
 			// Generate a reusable function that will serve as a template
 			// generator (and which will be cached).
       var fn = new Function( "jQuery","$data","$i", s.join('\n') );
