@@ -93,7 +93,7 @@ test("Basics", function() {
   test_handler( "creating new tags works", R('{{trans "translate" }}'), 'TRANSLATE' );
 
 
-  test_handler( "$ cannot be used by data", R('{{= $ }}', {'$':'foo'}), SyntaxError );
+  test_handler( "$ cannot be used by data", R('{{= $ }}', {'$':'foo'}), TypeError );
   test_handler( "_ can by used by data", R('{{= _ }}', {'_':'foo'}), 'foo' );
   jQuery.tmplcmd['_'] = jQuery.tmplcmd['trans'];
   test_handler( "_ can by assigned a tag", R('{{_ "translate" }}', {}), 'TRANSLATE' );
