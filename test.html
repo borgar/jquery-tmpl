@@ -278,6 +278,19 @@ test("Tag: each", function() {
   test_handler( 'errors are passed back correctly (type)', R("{{each arr}}{{= $i }}{{ type_error }}{{/each}}",O), TypeError );
 
 });
+test("Tag: with", function() {
+
+  test_handler( "without name does nothing", R('{{ with one }}{{= one }}{{ /with }}', O), 'first' );
+  test_handler( "without name does nothing (2)", R('{{ with one }}{{= two }}{{ /with }}', O), 'second' );
+  test_handler( "new name non-destructively overrides any existing", R('{{ with(two) "whee" }}{{= two }}{{ /with }}-{{= two }}', O), 'whee-second' );
+  test_handler( "operations on passed variable work", R('{{ with(foo) "123" + one + "456" }}{{= foo }}{{ /with }}', O), '123first456' );
+  test_handler( "works with member lookups", R('{{ with(foo) a.b.c }}{{= foo }}{{ /with }}', {a:{b:{c:"bar"}}}), 'bar' );
+  test_handler( "member lookups accept operations", R('{{ with(foo) a.b.c + 5 }}{{= foo + 2 }}{{ /with }}', {a:{b:{c:5}}}), '12' );
+  test_handler( 'errors are passed back correctly (syntax)', R("{{with arr}}{{= $i }}{{ syntax_error }}{{/with}}",O), SyntaxError );
+  test_handler( 'errors are passed back correctly (reference)', R("{{with arr}}{{= $i }}{{ reference_error }}{{/with}}",O), ReferenceError );
+  test_handler( 'errors are passed back correctly (type)', R("{{with arr}}{{= $i }}{{ type_error }}{{/with}}",O), TypeError );
+
+});
 test("Tag: if", function() {
 
   test_handler( "if with not parameters", R('{{ if }}TRUE{{ else }}FALSE{{ /if }}', { a:true }), SyntaxError );

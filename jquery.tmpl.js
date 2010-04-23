@@ -94,6 +94,11 @@
 			"else": {
 				prefix: "}else{"
 			},
+			"with": {
+			  _default: [ "", "" ],
+			  prefix: "(function($2){",
+			  suffix: "}.call(this,$SAFE))"
+			},
 			"html": {
 				prefix: "_.push(typeof $SAFE==='function'?$SAFE.call(this):$SAFE);"
 			},
