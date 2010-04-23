@@ -84,26 +84,26 @@
 				suffix: "}});"
 			},
 			"if": {
-        prefix: "if(" + safe_var + "){",
+        prefix: "if($SAFE){",
 				suffix: "}"
 			},
 			"ifdef": {
-				prefix: "if( typeof(" + safe_var + ") !== 'undefined' ){",
+				prefix: "if( typeof($SAFE) !== 'undefined' ){",
 				suffix: "}"
 			},
 			"ifndef": {
-				prefix: "if( typeof(" + safe_var + ") === 'undefined' ){",
+				prefix: "if( typeof($SAFE) === 'undefined' ){",
 				suffix: "}"
 			},
 			"else": {
 				prefix: "}else{"
 			},
 			"html": {
-				prefix: "_.push(typeof " + safe_var + "==='function'?" + safe_var + ".call(this):" + safe_var + ");"
+				prefix: "_.push(typeof $SAFE==='function'?$SAFE.call(this):$SAFE);"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.push($.encode(typeof " + safe_var + "==='function'?" + safe_var + ".call(this):" + safe_var + "));"
+				prefix: "_.push($.encode(typeof $SAFE==='function'?$SAFE.call(this):$SAFE));"
 			}
 		},
 
@@ -175,6 +175,7 @@
 		    var def = tmpl._default || [];
 				
 		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
+		              .split("$SAFE").join( safe_var )
 					        .split("$1").join( args   || def[0] )
 					        .split("$2").join( fnargs || def[1] )
 					        );
