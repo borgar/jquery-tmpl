@@ -144,7 +144,7 @@
 		    // have a matching template
 		    var tmpl = jQuery.tmplcmd[ type ];
 		    if ( !tmpl ) {
-					throw "Template tag not found: " + type;
+					throw ReferenceError("Template tag not found: " + type);
 				}
 
         // escape any escapables within arguments strings
