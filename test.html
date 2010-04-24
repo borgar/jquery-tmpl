@@ -269,8 +269,8 @@ test("Caching", function() {
 test("Tag: each", function() {
 
   test_handler( "loop", R('{{each arr}}{{= $i }}:{{= this }}/{{/each}}', O), '0:AA/1:BB/2:CC/' );
-  test_handler( "loop", R('{{each(i,item) arr}}{{= i }}:{{= item }}/{{/each}}', O), '0:AA/1:BB/2:CC/' );
-  test_handler( "loop", R('{{each(i,item) arr}}{{= i }}:{{= this }}/{{/each}}', O), '0:AA/1:BB/2:CC/' );
+  test_handler( "loop", R('{{ each arr as i, item }}{{= i }}:{{= item }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
+  test_handler( "loop", R('{{ each arr as i, item }}{{= i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
   test_handler( "loop", R('{{ each arr }}{{= $i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
 
   test_handler( 'errors are passed back correctly (syntax)', R("{{each arr}}{{= $i }}{{ syntax_error }}{{/each}}",O), SyntaxError );
@@ -282,10 +282,10 @@ test("Tag: with", function() {
 
   test_handler( "without name does nothing", R('{{ with one }}{{= one }}{{ /with }}', O), 'first' );
   test_handler( "without name does nothing (2)", R('{{ with one }}{{= two }}{{ /with }}', O), 'second' );
-  test_handler( "new name non-destructively overrides any existing", R('{{ with(two) "whee" }}{{= two }}{{ /with }}-{{= two }}', O), 'whee-second' );
-  test_handler( "operations on passed variable work", R('{{ with(foo) "123" + one + "456" }}{{= foo }}{{ /with }}', O), '123first456' );
-  test_handler( "works with member lookups", R('{{ with(foo) a.b.c }}{{= foo }}{{ /with }}', {a:{b:{c:"bar"}}}), 'bar' );
-  test_handler( "member lookups accept operations", R('{{ with(foo) a.b.c + 5 }}{{= foo + 2 }}{{ /with }}', {a:{b:{c:5}}}), '12' );
+  test_handler( "new name non-destructively overrides any existing", R('{{ with "whee" as two }}{{= two }}{{ /with }}-{{= two }}', O), 'whee-second' );
+  test_handler( "operations on passed variable work", R('{{ with "123" + one + "456" as foo }}{{= foo }}{{ /with }}', O), '123first456' );
+  test_handler( "works with member lookups", R('{{ with a.b.c as foo }}{{= foo }}{{ /with }}', {a:{b:{c:"bar"}}}), 'bar' );
+  test_handler( "member lookups accept operations", R('{{ with (a.b.c + 5) as foo }}{{= foo + 2 }}{{ /with }}', {a:{b:{c:5}}}), '12' );
   test_handler( 'errors are passed back correctly (syntax)', R("{{with arr}}{{= $i }}{{ syntax_error }}{{/with}}",O), SyntaxError );
   test_handler( 'errors are passed back correctly (reference)', R("{{with arr}}{{= $i }}{{ reference_error }}{{/with}}",O), ReferenceError );
   test_handler( 'errors are passed back correctly (type)', R("{{with arr}}{{= $i }}{{ type_error }}{{/with}}",O), TypeError );

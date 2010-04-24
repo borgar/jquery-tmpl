@@ -30,7 +30,7 @@ jQuery(function(){
 	arrayOfDataObjects[1].foo = { bar: null };
 	arrayOfDataObjects[2].foo = { bar: 'baz' };
 	
-	var tmpl = '<li>${$i}) <a href="${url}">${name}</a> (age: ${age}) (${cityJoin})</li>';
+	var tmpl = '<li>${ $i }) <a href="${ url }">${ name }</a> (age: ${ age }) (${ cityJoin })</li>';
 
 	$("#sometmpl")
 		.render( dataObject ) // Returns a LI with all the data filled in
@@ -53,28 +53,28 @@ jQuery(function(){
 </script>
 
 <script id="sometmpl" type="text/html">
-	<li>${$i}) <a href="${url}">${name}</a>
-	{{ifdef age}}Age: 
-		{{if age != null}}${age}
-		{{else}}(null)
-		{{/if}}
-	{{/ifdef}}
-	{{ifndef age}}(no age defined){{/ifndef}}
-	(${cityJoin})</li>
+	<li>${$i}) <a href="${ url }">${ name }</a>
+	{{ ifdef age }}Age: 
+		{{ if age != null }}${ age }
+		{{ else }}(null)
+		{{ /if }}
+	{{ /ifdef }}
+	{{ ifndef age }}(no age defined){{ /ifndef }}
+	(${ cityJoin })</li>
 </script>
 
 <script id="sometmpl2" type="text/html">
 	{#
 		This comment is ignored by the templating engine.
 	#}
-	${foo}
+	${ foo }
 	<li>
-		${$i}) <a href="${url}">${name}</a>
+		${ $i }) <a href="${ url }">${ name }</a>
 		Age:
-		{{ifdef age}}${age}{{else}}--{{/ifdef}}
-		Cities: {{each(i,city) cities}}${city}{{/each}}
-		{{ifdef foo.bar}}foo.bar is defined{{/ifdef}}
-		{{ifndef foo.bar}}foo.bar not defined{{/ifndef}}
+		{{ ifdef age }}${ age }{{ else }}--{{ /ifdef }}
+		Cities: {{ each cities as i, city }}${ city }{{ /each }}
+		{{ ifdef foo.bar }}foo.bar is defined{{ /ifdef }}
+		{{ ifndef foo.bar }}foo.bar not defined{{ /ifndef }}
 		{{= "['" + foo.bar + "']" }}
 	</li>
 </script>

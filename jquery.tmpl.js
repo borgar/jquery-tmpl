@@ -133,14 +133,14 @@
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}
 		  ];
-		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\((.*?)\))?(?:\s+([\s\S]*?))?\s*}}/ ) ) {
+		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+([\s\S]*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
 		    
 		    // have prefix before tag
 		    if ( m[1] ) {
           s.push( "_.push('" + m[1].replace( rx_esc, fn_esc ) + "');" );
 		    }
 
-		    var slash = m[2], type = m[3], fnargs = m[4], args = m[5];
+		    var slash = m[2], type = m[3], args = m[4], fnargs = m[5];
 
 		    // have a matching template
 		    var tmpl = jQuery.tmplcmd[ type ];
