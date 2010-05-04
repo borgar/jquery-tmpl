@@ -317,6 +317,15 @@ test("Tag: if", function() {
   test_handler( 'errors are passed back correctly (type)', R("{{if true}}{{ type_error }}{{/if}}",O), TypeError );
 
 });
+test("Tag: include", function() {
+
+  jQuery.templates['test'] = jQuery.tmpl('{{= "test" }}');
+  test_handler( "simple include", R('{{ include "test" }}'), 'test' );
+
+  jQuery.templates['test2'] = jQuery.tmpl('{{ each arr as n,itm }}[{{= itm }}]-{{ /each }}');
+  test_handler( "data access", R('{{ include "test2" }}', O), '[AA]-[BB]-[CC]-' );
+
+});
 </script>
 </head>
 <body>
