@@ -109,7 +109,7 @@
 		},
 
 		encode: function( text ) {
-			return text != null ? document.createTextNode( text.toString() ).nodeValue : "";
+			return text == null ? '' : ( text + '' ).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 		},
 
 		tmpl: function( str, data, i ) {

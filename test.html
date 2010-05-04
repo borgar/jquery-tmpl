@@ -256,6 +256,11 @@ test("Variables", function() {
   test_handler( 'member functions in a sequence don\'t get called', R("{{= foo.bar }}", cls), '' );
 
   // TODO: escaping
+  test_handler( 'echoing escapes html', R("{{= 'foo<div>bar</div>baz' }}"), 'foo&lt;div&gt;bar&lt;/div&gt;baz' );
+  test_handler( 'echoing escapes html (lookup)', R("{{= r }}", {r:'foo<div>bar</div>baz'}), 'foo&lt;div&gt;bar&lt;/div&gt;baz' );
+  test_handler( 'echoing escapes ampersands 1', R("{{= '&' }}"), '&amp;' );
+  test_handler( 'echoing escapes ampersands 2', R("{{= '&amp;' }}"), '&amp;amp;' );
+  test_handler( 'echoing escapes & < >', R("{{= '-<&>-<&>-' }}"), '-&lt;&amp;&gt;-&lt;&amp;&gt;-' );
 
 });
 /*
