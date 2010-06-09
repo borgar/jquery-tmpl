@@ -80,7 +80,7 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "(function(){var $first=true;jQuery.each($1,function($2){with(this){",
+				prefix: "_tmp=$SAFE;(function(){var $first=true;jQuery.each(typeof _tmp==='function'?_tmp.call(this):_tmp,function($2){with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {

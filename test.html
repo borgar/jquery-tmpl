@@ -18,6 +18,7 @@
 var O = {
     one: "first",
     two: "second",
+    count: 5,
     v: "test",
     arr: ["AA","BB","CC"],
     dict: {"leovinus":"this","scraliontis":"that","brobostigon":"other"},
@@ -285,8 +286,20 @@ test("Tag: each", function() {
   test_handler( "loop", R('{{ each arr as i, item }}{{= i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
   test_handler( "loop", R('{{ each arr }}{{= $i }}:{{= this }}/{{ /each }}', O), '0:AA/1:BB/2:CC/' );
 
+  // values
+  test_handler( "loop over empty dict", R('{{ each dict }}{{=}} {{ /each }}', { dict: {} }), "");
+  test_handler( "loop over empty array", R('{{ each arr }}{{=}} {{ /each }}', { arr: [] }), "");
+  test_handler( "loop over string", R('{{ each one }}{{=}} {{ /each }}', O), "f i r s t ");
+  test_handler( "loop over function", R('{{ each fun }}{{=}} {{ /each }}', O), "R E T U R N E D "); // for consistency with html and =
+  test_handler( "loop over undefined var (TypeError)", R('{{ each missing }}{{=}} {{ /each }}', O), TypeError);
+  test_handler( "loop over undefined value (TypeError)", R('{{ each dict.missing }}{{=}} {{ /each }}', O), TypeError);
+  test_handler( "loop over integer (TypeError)", R('{{ each count }}{{=}} {{ /each }}', O), TypeError);
+
   test_handler( "first", R('{{ each dict }}{{= $i }}:{{ if $first }}first{{ else }}!first{{ /if }}/{{ /each }}', O), 'leovinus:first/scraliontis:!first/brobostigon:!first/' );
   test_handler( "first", R('{{ each dict }}{{ if !$first }}, {{ /if }}{{= $i }}:{{ = this }}{{ /each }}', O), 'leovinus:this, scraliontis:that, brobostigon:other' );
+
+  var nested = '{{ each this as i,a }}{{ each a.b as j,b }}{{= i }}:{{= a.s }}/{{= j }}:{{= b.s }} {{ /each }}{{ /each }}';
+  test_handler( "nested loops", R(nested, [{s:"foo",b:[{s:"AA"},{s:"BB"}]},{s:"bar",b:[{s:"CC"},{s:"DD"}]}]), "0:foo/0:AA 0:foo/1:BB 1:bar/0:CC 1:bar/1:DD ");
 
   test_handler( 'errors are passed back correctly (syntax)', R("{{each arr}}{{= $i }}{{ syntax_error }}{{/each}}",O), SyntaxError );
   test_handler( 'errors are passed back correctly (reference)', R("{{each arr}}{{= $i }}{{ reference_error }}{{/each}}",O), ReferenceError );
@@ -308,7 +321,7 @@ test("Tag: with", function() {
 });
 test("Tag: if", function() {
 
-  test_handler( "if with not parameters", R('{{ if }}TRUE{{ else }}FALSE{{ /if }}', { a:true }), SyntaxError );
+  test_handler( "if with no parameters", R('{{ if }}TRUE{{ else }}FALSE{{ /if }}', { a:true }), SyntaxError );
   test_handler( "if:true", R('{{ if a }}TRUE{{ else }}FALSE{{ /if }}', { a:true }), 'TRUE' );
   test_handler( "if:false", R('{{ if a }}TRUE{{ else }}FALSE{{ /if }}', { a:false }), 'FALSE' );
   test_handler( "if:null", R('{{ if a }}TRUE{{ else }}FALSE{{ /if }}', { a:null }), 'FALSE' );
