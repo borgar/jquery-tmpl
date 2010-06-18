@@ -80,7 +80,7 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "_tmp=$SAFE;(function(){var $first=true;jQuery.each(typeof _tmp==='function'?_tmp.call(this):_tmp,function($2){with(this){",
+				prefix: "_.safe=$SAFE;(function(){var $first=true;jQuery.each(typeof _.safe==='function'?_.safe.call(this):_.safe,function($2){with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
@@ -107,11 +107,11 @@
 			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,_.data):'');"
 			},
 			"html": {
-				prefix: "_tmp=$SAFE;_.push(typeof _tmp==='function'?_tmp.call(this):_tmp);"
+				prefix: "_.safe=$SAFE;_.push(typeof _.safe==='function'?_.safe.call(this):_.safe);"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_tmp=$SAFE;_.push($.encode(typeof _tmp==='function'?_tmp.call(this):_tmp));"
+				prefix: "_.safe=$SAFE;_.push($.encode(typeof _.safe==='function'?_.safe.call(this):_.safe));"
 			}
 		},
 
@@ -135,7 +135,7 @@
       
       // Convert the template into JavaScript
 		  var m, stack = [], s = [
-		    "var $=jQuery,_=[],_tmp;", 
+		    "var $=jQuery,_=[];", 
 		    "_.data=$data;", 
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}
