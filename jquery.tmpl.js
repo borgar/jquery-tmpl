@@ -104,7 +104,7 @@
 			  suffix: "}.call(this,$SAFE))"
 			},
 			"include": {
-			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,_.data):'');"
+			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,this):'');"
 			},
 			"html": {
 				prefix: "_.safe=$SAFE;_.push(typeof _.safe==='function'?_.safe.call(this):_.safe);"
