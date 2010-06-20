@@ -7,7 +7,7 @@
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
-	    safe_var = "(function(){try{return $1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
+	    safe_var = "(function(){try{return $.isFunction($1)?($1).call(this):$1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
 	    rx_oper  = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
 	    rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
   
@@ -80,7 +80,7 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "_.safe=$SAFE;(function(){var $first=true;jQuery.each(typeof _.safe==='function'?_.safe.call(this):_.safe,function($2){with(this){",
+				prefix: "(function(){var $first=true;jQuery.each($SAFE,function($2){with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
@@ -104,14 +104,14 @@
 			  suffix: "}.call(_.safe,_.safe))"
 			},
 			"include": {
-			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,this):'');"
+			  prefix: "_.safe=$SAFE;_.push(String(_.safe) in $.templates?$.templates[_.safe].call(this,$,this):'');"
 			},
 			"html": {
-				prefix: "_.safe=$SAFE;_.push(typeof _.safe==='function'?_.safe.call(this):_.safe);"
+				prefix: "_.push($SAFE);"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.safe=$SAFE;_.push($.encode(typeof _.safe==='function'?_.safe.call(this):_.safe));"
+				prefix: "_.push($.encode($SAFE));"
 			}
 		},
 
