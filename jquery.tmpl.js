@@ -100,8 +100,8 @@
 			},
 			"with": {
 			  _default: [ "", "" ],
-			  prefix: "(function($2){",
-			  suffix: "}.call(this,$SAFE))"
+			  prefix: "_.safe=$SAFE;(function($2){",
+			  suffix: "}.call(_.safe,_.safe))"
 			},
 			"include": {
 			  prefix: "_.push(String($1) in $.templates?$.templates[$1].call(this,$,this):'');"
