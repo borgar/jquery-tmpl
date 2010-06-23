@@ -7,7 +7,7 @@
 (function(jQuery){
 	// Override the DOM manipulation function
 	var oldManip = jQuery.fn.domManip,
-	    safe_var = "(function(){try{return $.isFunction($1)?($1).call(this):$1;}catch(err){if(err.name==='ReferenceError'||err.name==='TypeError'){return undefined;}throw err;}}.call(this))",
+	    safe_var = "try{$ARGS=($1);if($.isFunction($ARGS))$ARGS=$ARGS.call(this)}catch(e){if(e.name==='ReferenceError'||e.name==='TypeError'){$ARGS=undefined}else throw e};",
 	    rx_oper  = /((<<|>?>>|[&\*\+-\/\^\|])?=|\+\+|--|\{|\}|\[)/,
 	    rx_keywd = /\b(break|(cas|els|continu|delet|whil)e|(ca|swi)tch|with|default|do|finally|try|for|var|function|return|if|new|throw|void)\b/;
   
@@ -80,19 +80,19 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "(function(){var $first=true;jQuery.each($SAFE,function($2){with(this){",
+				prefix: "(function(){var $first=true;jQuery.each($ARGS,function($FNARGS){with(this){",
 				suffix: "}$first=false});}).call(this);"
 			},
 			"if": {
-        prefix: "if($SAFE){",
+				prefix: "if($ARGS){",
 				suffix: "}"
 			},
 			"ifdef": {
-				prefix: "if( typeof($SAFE) !== 'undefined' ){",
+				prefix: "if( typeof($ARGS) !== 'undefined' ){",
 				suffix: "}"
 			},
 			"ifndef": {
-				prefix: "if( typeof($SAFE) === 'undefined' ){",
+				prefix: "if( typeof($ARGS) === 'undefined' ){",
 				suffix: "}"
 			},
 			"else": {
@@ -100,18 +100,18 @@
 			},
 			"with": {
 			  _default: [ "", "" ],
-			  prefix: "_.safe=$SAFE;(function($2){",
-			  suffix: "}.call(_.safe,_.safe))"
+				prefix: "(function($FNARGS){",
+				suffix: "}.call($ARGS,$ARGS))"
 			},
 			"include": {
-			  prefix: "_.safe=$SAFE;_.push(String(_.safe) in $.templates?$.templates[_.safe].call(this,$,this):'');"
+				prefix: "_.push(String($ARGS) in $.templates?$.templates[$ARGS].call(this,$,this):'');"
 			},
 			"html": {
-				prefix: "_.push($SAFE);"
+				prefix: "_.push($ARGS);"
 			},
 			"=": {
 				_default: [ "this" ],
-				prefix: "_.push($.encode($SAFE));"
+				prefix: "_.push($.encode($ARGS));"
 			}
 		},
 
@@ -135,7 +135,7 @@
       
       // Convert the template into JavaScript
 		  var m, stack = [], s = [
-		    "var $=jQuery,_=[];", 
+			  "var $=jQuery,_=[],$ARGS;", 
 		    "_.data=$data;", 
 		    "_.index=$i||0;",
 		    "with($data){" // Introduce the data as local variables using with(){}
@@ -200,16 +200,38 @@
           }
         }
 
-		    s.push( tmpl[ slash ? "suffix" : "prefix" ]
-		              .split("$SAFE").join( safe_var )
-					        .split("$1").join( args   || def[0] )
-					        .split("$2").join( fnargs || def[1] )
-					        );
-				
+				if ( tmpl.suffix ) {
+					var suffix_args = -1 !== tmpl.suffix.indexOf("$ARGS");
+
+					if (slash) {
+						if (suffix_args) {
+							s.push("}).call(this)"); // end safe_var scope
+						}
+
+						s.push(tmpl.suffix.split("$FNARGS").join(fnargs || def[1]));
+					} else {
+						if (suffix_args || -1 !== tmpl.prefix.indexOf("$ARGS")) {
+							s.push(safe_var.split("$1").join(args || def[0]));
+						}
+
+						s.push(tmpl.prefix.split("$FNARGS").join(fnargs || def[1]));
+
+						if (suffix_args) {
+							// we need to preserve the current value of $ARGS for the suffix
+							s.push("(function(){var $ARGS;");
+						}
+					}
+				} else {
+					if (-1 !== tmpl.prefix.indexOf("$ARGS")) {
+						s.push(safe_var.split("$1").join(args || def[0]));
+					}
+
+					s.push(tmpl.prefix.split("$FNARGS").join(fnargs || def[1]));
+				}
+
 				str = str.substr( m[0].length );
-		    
-		  }
-		  
+			}
+
 		  // push any remaining string 
 	    if ( str ) {
         s.push( "_.push('" + str.replace( rx_esc, fn_esc ) + "');" );
