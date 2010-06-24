@@ -80,8 +80,8 @@
 		tmplcmd: {
 			"each": {
 				_default: [ null, "$i" ],
-				prefix: "(function(){var $first=true;jQuery.each($ARGS,function($FNARGS){with(this){",
-				suffix: "}$first=false});}).call(this);"
+				prefix: "if({'number':1,'boolean':1}[typeof $ARGS])throw TypeError('not iterable');(function(){var $first=true;jQuery.each($ARGS,function($FNARGS){with(this){",
+				suffix: "}$first=false})}).call(this);"
 			},
 			"if": {
 				prefix: "if($ARGS){",
@@ -101,12 +101,13 @@
 			"with": {
 			  _default: [ "", "" ],
 				prefix: "(function($FNARGS){",
-				suffix: "}.call($ARGS,$ARGS))"
+				suffix: "}.call($ARGS,$ARGS));"
 			},
 			"include": {
-				prefix: "_.push(String($ARGS) in $.templates?$.templates[$ARGS].call(this,$,this):'');"
+				prefix: "if(''+$ARGS in $.templates)_.push($.templates[$ARGS].call(this,$,this));else throw ReferenceError('No template named \"'+$ARGS+'\".');"
 			},
 			"html": {
+				_default: [ "this" ],
 				prefix: "_.push($ARGS);"
 			},
 			"=": {

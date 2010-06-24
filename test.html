@@ -24,7 +24,7 @@ var O = {
     count: 5,
     v: "test",
     arr: ["AA","BB","CC"],
-    dict: {"leovinus":"this","scraliontis":"that","brobostigon":"other"},
+    dict: {leovinus:"this",scraliontis:"that",brobostigon:"other"},
     fun: function () {
       return 'RETURNED';
     }
@@ -295,7 +295,9 @@ test("Tag: each", function() {
   test_handler( "loop over string", R('{{ each one }}{{=}} {{ /each }}', O), "f i r s t ");
   test_handler( "loop over undefined var (TypeError)", R('{{ each missing }}{{=}} {{ /each }}', O), TypeError);
   test_handler( "loop over undefined value (TypeError)", R('{{ each dict.missing }}{{=}} {{ /each }}', O), TypeError);
-  test_handler( "loop over integer (TypeError)", R('{{ each count }}{{=}} {{ /each }}', O), TypeError);
+  test_handler( "loop over null (TypeError)", R('{{ each n }}{{=}} {{ /each }}', { n: null }), TypeError);
+  test_handler( "loop over integer primitive (TypeError)", R('{{ each count }}{{=}} {{ /each }}', { b: true }), TypeError);
+  test_handler( "loop over boolean primitive (TypeError)", R('{{ each b }}{{=}} {{ /each }}', O), TypeError);
 
   test_handler( "first", R('{{ each dict }}{{= $i }}:{{ if $first }}first{{ else }}!first{{ /if }}/{{ /each }}', O), 'leovinus:first/scraliontis:!first/brobostigon:!first/' );
   test_handler( "first", R('{{ each dict }}{{ if !$first }}, {{ /if }}{{= $i }}:{{ = this }}{{ /each }}', O), 'leovinus:this, scraliontis:that, brobostigon:other' );
@@ -363,6 +365,8 @@ test("Tag: include", function() {
   test_handler( "context (each)", R('{{= one }}/{{ each arr }}{{ include "test3" }}-{{ /each }}', O), 'first/AA-BB-CC-' );
 
   test_handler( "callable", R('{{ include this }}', function() { return "test"; }), "test");
+
+  test_handler( "nonexistent template (artificial ReferenceError)", R('{{ include "grobble" }}', O), ReferenceError );
 
 });
 test("Plugin: autocache", function() {
