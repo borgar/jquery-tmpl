@@ -14,7 +14,6 @@
   <script src="jquery.tmpl.autocache.js"></script>
 
   <script id="FooTemplate" type="text/html">foo-{{= one }}</script>
-  <div id="template-bar" class="jquery-tmpl" style="display:none">bar-{{= two }}</div>
 <script>
 //QUnit.done = function () { $('.fail ol').show(); };
 
@@ -381,5 +380,6 @@ test("Plugin: autocache", function() {
  <div id="qunit-testrunner-toolbar"></div>
  <h2 id="qunit-userAgent"></h2>
  <ol id="qunit-tests"></ol>
+ <div id="template-bar" class="jquery-tmpl" style="display:none">bar-{{= two }}</div>
 </body>
 </html>
