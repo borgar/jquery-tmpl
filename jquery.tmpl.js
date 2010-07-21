@@ -137,9 +137,9 @@
       // Convert the template into JavaScript
 		  var m, stack = [], s = [
 			  "var $=jQuery,_=[],$ARGS;", 
-		    "_.data=$data;", 
+		    "_.data=$data||{};", 
 		    "_.index=$i||0;",
-		    "with($data){" // Introduce the data as local variables using with(){}
+		    "with(_.data){" // Introduce the data as local variables using with(){}
 		  ];
 		  while ( m = str.match( /^([\s\S]*?){{\s*(\/?)(\w+|\S)(?:\s+((?:[^'"]*?|"[^"\\]*(?:\\.[^"\\]*)*"|'[^'\\]*(?:\\.[^'\\]*)*')*?))?(?:\s+as\s+(.*?))?\s*}}/ ) ) {
 		    

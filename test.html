@@ -30,7 +30,7 @@ var O = {
 };
 var R = function ( tmpl, data ) {
   try {
-    return jQuery.tmpl( tmpl ).call( data||{}, jQuery, data||{}, 0 );
+    return jQuery.tmpl( tmpl ).call( data, jQuery, data, 0 );
   }
   catch ( e ) {
     if ( typeof e === 'string' ) {
@@ -64,6 +64,9 @@ test("Basics", function() {
 
   test_handler( 'plain text passes through untouched', R('lorem ipsum',O), 'lorem ipsum' );
   test_handler( 'whitespace is left untouched', R('\n\tlorem\n\n\tipsum \t',O), '\n\tlorem\n\n\tipsum \t' );
+
+  ok( jQuery.tmpl( 'some text' ).call(), "jQuery.tmpl does not require parameters" );
+  ok( jQuery('<script type="text/html"><div>some text</div><\x2fscript>').render().html(), "jQuery.fn.render does not require parameters" );
 
   // throw errors with incomplete syntax
   test_handler( 'empty tag', R("{{}}",O), '{{}}' );
